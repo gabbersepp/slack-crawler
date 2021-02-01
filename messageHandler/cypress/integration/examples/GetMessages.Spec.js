@@ -57,7 +57,7 @@ describe("Bla", () => {
             }
 
             channelIds.forEach(c => {
-                last = last.then(() => visit(c))
+                last = last.then(() => visit(c).then(() => scroll()))
             })
 
             // wait for "history" requests until no one occures anymore
@@ -65,6 +65,28 @@ describe("Bla", () => {
         })
     })
 
+    function scroll() {
+        return new Promise(async resolve => {
+            for(let i = 0; i < 50; i++) {
+                debugger;
+                // should be enough :-)
+                // scroll as long as we reach the top
+                Cypress.$(".c-scrollbar__hider")[1].scrollTo(0, 0)
+                if (Cypress.$("div[id='0000000000\.000001']").length > 0) {
+                    // this is a fake item which will be added over the top most message
+                    break;
+                }
+                await sleep(500)
+            }
+            resolve()
+        })
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => {
+            setTimeout(resolve, ms)
+        })
+    }
     function waitAndWrite(dataDir) {
         cy.wait("@history").then(obj => {
             if (obj.request.body) {
