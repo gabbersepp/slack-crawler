@@ -4,7 +4,7 @@
     tile>
     <v-list-item three-line v-for="msg in messages" :key="msg.ts">
       <v-list-item-content>
-        <v-list-item-title>{{ msg.ts }}</v-list-item-title>
+        <v-list-item-title>{{ msg.displayUser }}</v-list-item-title>
         <v-list-item-subtitle>
           {{ msg.text }}
         </v-list-item-subtitle>
