@@ -29,10 +29,16 @@ describe("Bla", () => {
 
         cy.intercept("POST", /.*users\/list.*/i).as("users");
         cy.intercept("POST", /.*client\.counts.*/i).as("clientCounts");
+        cy.intercept("POST", /.*client\.boot.*/i).as("clientBoot");
+
         cy.get("button[data-qa='signin_button']").click();
         //cy.get("button[data-qa='continue_in_browser']").click()
         cy.visit("https://sagswe.slack.com/")
 
+        cy.wait("@clientBoot").then(result => {
+            const channelList = result.response.body.channels.map(u => ({ id: u.id, name: u.name }));
+            cy.writeFile(`${config.dataDir}/channels/channels.json`, JSON.stringify(channelList));
+        })
         cy.wait("@users").then(result => {
             const userList = result.response.body.results.map(u => ({ id: u.id, name: u.name }));
             cy.writeFile(`${config.dataDir}/users/users.json`, JSON.stringify(userList));
@@ -48,7 +54,7 @@ describe("Bla", () => {
             if (config.takeOnly) {
                 channelIds = channelIds.slice(0, config.takeOnly)
             }
-            
+
             channelIds.forEach(c => {
                 last = last.then(() => visit(c))
             })

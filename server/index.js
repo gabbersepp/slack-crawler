@@ -8,6 +8,17 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
+app.get("/slackIds", (req, res) => {
+    const config = getConfig();
+    const userList = JSON.parse(fs.readFileSync(`${config.dataDir}/users/users.json`).toString());
+    const channelList = JSON.parse(fs.readFileSync(`${config.dataDir}/channels/channels.json`).toString());
+    
+    res.json({
+        userList,
+        channelList
+    });
+})
+
 app.get("/ids", (req, res) => {
     const config = getConfig();
     const ids = fs.readdirSync(`${config.dataDir}/messages`).map(file => {

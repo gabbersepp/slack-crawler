@@ -26,8 +26,8 @@ fs.readdirSync(`${dataDir}/messages-temp`).map(file => {
   messageData[channel] = messages;
   const tempMessages = JSON.parse(fs.readFileSync(filePath).toString()).messages
   const newMessages = tempMessages.filter(m => !messages.find(m2 => m2.ts == m.ts))
-  console.log(`write ${newMessages.length} new messages`)
+  console.log(`write ${newMessages.length} new messages for ${channel}`)
   messages.push(...newMessages)
-  fs.rmSync(filePath)
+  fs.unlinkSync(filePath)
   fs.writeFileSync(`${dataDir}/messages/${channel}.json`, JSON.stringify(messages)) 
 })
