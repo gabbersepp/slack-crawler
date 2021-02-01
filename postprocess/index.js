@@ -6,7 +6,7 @@ function getConfig() {
   return JSON.parse(fs.readFileSync("config/config.json").toString())
 }
 
-const dataDir = getConfig().dataDir;
+const dataDir = getConfig().postprocessor.dataDir;
 
 if (!fs.existsSync(`${dataDir}/messages`)) {
   fs.mkdirSync(`${dataDir}/messages`)

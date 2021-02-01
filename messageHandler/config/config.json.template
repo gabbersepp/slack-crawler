@@ -1,5 +1,13 @@
 { 
-    "dataDir": "../data",
+    "crawler": {
+        "dataDir": "../data"
+    },
+    "postprocessor": {
+        "dataDir": "../data"
+    },
+    "server": {
+        "dataDir": "../data"
+    },
     "user": "",
     "pwd": "",
     "takeOnly": false

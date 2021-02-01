@@ -37,15 +37,16 @@ describe("Bla", () => {
 
         cy.wait("@clientBoot").then(result => {
             const channelList = result.response.body.channels.map(u => ({ id: u.id, name: u.name }));
-            cy.writeFile(`${config.dataDir}/channels/channels.json`, JSON.stringify(channelList));
+            cy.writeFile(`${config.crawler.dataDir}/channels/channels.json`, JSON.stringify(channelList));
         })
         cy.wait("@users").then(result => {
             const userList = result.response.body.results.map(u => ({ id: u.id, name: u.name }));
-            cy.writeFile(`${config.dataDir}/users/users.json`, JSON.stringify(userList));
+            cy.writeFile(`${config.crawler.dataDir}/users/users.json`, JSON.stringify(userList));
         })
         cy.wait("@clientCounts").then(result => {
             const body = result.response.body;
             let channelIds = body.channels.map(x => x.id)
+            channelIds.push(...body.ims.map(x => x.id))
 
             let last = cy.wrap({});
 
@@ -60,7 +61,7 @@ describe("Bla", () => {
             })
 
             // wait for "history" requests until no one occures anymore
-            waitAndWrite(config.dataDir);
+            waitAndWrite(config.crawler.dataDir);
         })
     })
 

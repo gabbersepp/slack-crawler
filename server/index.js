@@ -10,8 +10,8 @@ app.use(express.urlencoded({extended: true}))
 
 app.get("/slackIds", (req, res) => {
     const config = getConfig();
-    const userList = JSON.parse(fs.readFileSync(`${config.dataDir}/users/users.json`).toString());
-    const channelList = JSON.parse(fs.readFileSync(`${config.dataDir}/channels/channels.json`).toString());
+    const userList = JSON.parse(fs.readFileSync(`${config.server.dataDir}/users/users.json`).toString());
+    const channelList = JSON.parse(fs.readFileSync(`${config.server.dataDir}/channels/channels.json`).toString());
     
     res.json({
         userList,
@@ -21,7 +21,7 @@ app.get("/slackIds", (req, res) => {
 
 app.get("/ids", (req, res) => {
     const config = getConfig();
-    const ids = fs.readdirSync(`${config.dataDir}/messages`).map(file => {
+    const ids = fs.readdirSync(`${config.server.dataDir}/messages`).map(file => {
         return /(.*)\.json/.exec(file)[1]
     })
     res.json(ids);
@@ -29,7 +29,7 @@ app.get("/ids", (req, res) => {
 
 app.get("/message/:id", (req, res) => {
     const config = getConfig();
-    const path = `${config.dataDir}/messages/${req.params.id}.json`;
+    const path = `${config.server.dataDir}/messages/${req.params.id}.json`;
     if (!fs.existsSync(path)) {
         res.sendStatus(404);
         return;
