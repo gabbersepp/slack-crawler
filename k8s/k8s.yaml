@@ -51,7 +51,7 @@ kind: CronJob
 metadata:
   name: slack-crawler
 spec:
-  schedule: "*/30 * * * *"
+  schedule: "0 * * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   concurrencyPolicy: Forbid
@@ -118,7 +118,7 @@ kind: CronJob
 metadata:
   name: slack-crawler-postprocess
 spec:
-  schedule: "*/45 * * * *"
+  schedule: "15 * * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
