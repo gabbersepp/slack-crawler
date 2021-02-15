@@ -78,7 +78,7 @@
                 :key="item.id"
                 link
               >
-                <v-list-item-content @click="select(item.id)">
+                <v-list-item-content @click="selectIm(item.id)">
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -95,6 +95,8 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import SlackId from './contracts/SlackId';
+import ImId from './contracts/ImId';
+
 import Api from './utils/Api';
 import Utils from './utils/Utils';
 
@@ -103,6 +105,7 @@ export default class App extends Vue {
 
   private users: SlackId[] = [];
   private channels: SlackId[] = [];
+  private ims: ImId[] = [];
 
   private api: Api = new Api();
 
@@ -111,10 +114,18 @@ export default class App extends Vue {
     const slackIdResult = await this.api.getSlackIds();
     this.users = slackIdResult.userList;
     this.channels = slackIdResult.channelList;
+    this.ims = slackIdResult.imsList;
   }
 
   public select(id: string) {
     this.$router.push({ path: `/messages/${id}` })
+  }
+
+  public selectIm(id: string) {
+    const im = this.ims.find(x => x.user === id)
+    if (im) {
+      this.$router.push({ path: `/messages/${im.id}` })
+    }
   }
 }
 </script>

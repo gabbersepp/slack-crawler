@@ -37,7 +37,11 @@ describe("Bla", () => {
 
         cy.wait("@clientBoot").then(result => {
             const channelList = result.response.body.channels.map(u => ({ id: u.id, name: u.name }));
+            const imsList = result.response.body.ims.map(u => ({ id: u.id, user: u.user }));
+
             cy.writeFile(`${config.crawler.dataDir}/channels/channels.json`, JSON.stringify(channelList));
+            cy.writeFile(`${config.crawler.dataDir}/channels/ims.json`, JSON.stringify(imsList));
+            
         })
         cy.wait("@users").then(result => {
             const userList = result.response.body.results.map(u => ({ id: u.id, name: u.name }));

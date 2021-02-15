@@ -119,7 +119,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/configuration-snippet: |
         rewrite /api/(.+)$ /$1 break;  
-    nginx.ingress.kubernetes.io/whitelist-source-range:  192.168.2.0/8
+    nginx.ingress.kubernetes.io/whitelist-source-range:  192.168.2.0/24
 spec:
   rules:
   - host: slack.h5b.de

@@ -12,10 +12,12 @@ app.get("/slackIds", (req, res) => {
     const config = getConfig();
     const userList = JSON.parse(fs.readFileSync(`${config.server.dataDir}/users/users.json`).toString());
     const channelList = JSON.parse(fs.readFileSync(`${config.server.dataDir}/channels/channels.json`).toString());
+    const imsList = JSON.parse(fs.readFileSync(`${config.server.dataDir}/channels/ims.json`).toString());
     
     res.json({
         userList,
-        channelList
+        channelList,
+        imsList
     });
 })
 
