@@ -26,3 +26,7 @@ pnpm-debug.log*
 /messageHandler/cypress/screenshots
 /messageHandler/*.log
 /data
+
+obj
+bin
+/postprocess/dist
