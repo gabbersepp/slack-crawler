@@ -8,7 +8,6 @@ const dataDir = getConfig().postprocessor.dataDir;
 
 function getConfig() {
   const config = Utils.getConfig(path.resolve("config/config.json"));
-  console.log(JSON.stringify(config));
   return config;
 }
 
@@ -23,8 +22,19 @@ function getTempMessages() {
   });
 }
 
-async function process() {
-  await repo.init();
+function readAdditionalData() {
+  const channels = JSON.parse(fs.readFileSync(`${dataDir}/channels/channels.json`).toString()) as Channel[];
+  const ims = JSON.parse(fs.readFileSync(`${dataDir}/channels/ims.json`).toString()) as Ims[];
+  const users = JSON.parse(fs.readFileSync(`${dataDir}/users/users.json`).toString()) as User[];
+
+  return {
+    channels,
+    ims,
+    users
+  }
+}
+
+async function processMessages() {
   const newMsgFile = getTempMessages();
 
   for (const d of newMsgFile) {
@@ -41,11 +51,39 @@ async function process() {
     }
     for (const m of messages) {
       m.channel = d.channel;
-      await repo.insert(m);
+      await repo.insertMessage(m);
     }
   }
-
-  await repo.close();
 }
 
-process();
+async function processData() {
+  const data = readAdditionalData();
+  const existingChannels = await repo.readChannels();
+  const existingUsers = await repo.readUsers();
+  const existingIms = await repo.readIms();
+  
+  const newChannels = data.channels.filter(localC => !existingChannels.find(ec => ec.id === localC.id));
+  const newUsers = data.users.filter(localU => !existingUsers.find(eu => eu.id === localU.id));
+  const newIms = data.ims.filter(localI => !existingIms.find(ei => ei.id === localI.id));
+  
+  for (const nc of newChannels) {
+    await repo.insertChannel(nc);
+  }
+
+  for (const nu of newUsers) {
+    await repo.insertUser(nu);
+  }
+
+  for (const ni of newIms) {
+    await repo.insertIms(ni);
+  }
+}
+
+async function processAll() {
+  await repo.init();
+  await processData();
+  await processMessages();
+  return repo.close();
+}
+
+processAll();
