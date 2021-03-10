@@ -1,11 +1,16 @@
 // merge messages-temp into /messages
 import * as fs from "fs";
-import { getConfig } from "./utils.js";
-import Repository from "./Repository";
-import Message from "./contracts/Message.js";
+import * as path from "path";
+import { Config, User, Channel, Ims, Repository, Utils, Message } from "./../common";
 
-const repo = new Repository();
+const repo = new Repository(getConfig());
 const dataDir = getConfig().postprocessor.dataDir;
+
+function getConfig() {
+  const config = Utils.getConfig(path.resolve("config/config.json"));
+  console.log(JSON.stringify(config));
+  return config;
+}
 
 function readNewMessages(filePath): Message[] {
   return JSON.parse(fs.readFileSync(filePath).toString()).messages;
@@ -35,6 +40,7 @@ async function process() {
       await repo.delete(em);
     }
     for (const m of messages) {
+      m.channel = d.channel;
       await repo.insert(m);
     }
   }
