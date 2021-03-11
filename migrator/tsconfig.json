@@ -1,0 +1,15 @@
+{
+    "extends": "../tsconfig-base.json",
+      "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist/server"
+      },
+      "references": [
+          { 
+              "path": "../common"
+          }
+      ]
+    }
