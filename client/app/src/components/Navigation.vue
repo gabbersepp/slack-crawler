@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer permanent>
+    <v-navigation-drawer permanent app class="pa-1">
         <v-text-field  prepend-icon="mdi-magnify" v-model="searchValue" placeholder="Kanal oder User" clearable></v-text-field>
         <v-text-field  prepend-icon="mdi-magnify" v-model="searchValueMessages" placeholder="Nachricht" clearable></v-text-field>
         

@@ -1,20 +1,13 @@
 <template>
   <v-app>
-        <v-app-bar
-      app
-      color="#3F0E40"
-      dark
-    >
-
+    <v-app-bar app color="#3F0E40" dark>
       <v-spacer></v-spacer>
-
     </v-app-bar>
 
-    <v-main>
-      <Navigation :users="users" :channels="channels" />
-
+    <Navigation :users="users" :channels="channels" />
+    <v-content>
       <router-view :key="$route.name + ($route.params.id || '')"/>
-    </v-main>
+    </v-content>
   </v-app>
 </template>
 
