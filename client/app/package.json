@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "serve": "npm run contracts && vue-cli-service serve",
+    "build": "npm run contracts && vue-cli-service build",
+    "contracts": "node build/index.js"
   },
   "dependencies": {
     "vue": "^2.6.11",

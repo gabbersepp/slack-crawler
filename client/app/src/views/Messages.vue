@@ -14,14 +14,14 @@
 </template>
 
 <script lang="ts">
-import SlackMessage from '@/contracts/SlackMessage';
+import Message from '@/contracts/server/Message';
 import Api from '@/utils/Api';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class Messages extends Vue {
     private api: Api = new Api();
-    private messages: SlackMessage[] = [];
+    private messages: Message[] = [];
 
     public async mounted() {
         const id = this.$route.params.id;
