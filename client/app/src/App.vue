@@ -47,10 +47,6 @@ export default class App extends Vue {
     this.ims = slackIdResult.imsList;
   }
 
-  public select(id: string) {
-    this.$router.push({ path: `/messages/${id}` })
-  }
-
   public selectIm(id: string) {
     const im = this.ims.find(x => x.user === id)
     if (im) {

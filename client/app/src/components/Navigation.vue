@@ -54,6 +54,8 @@ export default class Navigation extends Vue {
     private searchValueMessages: string = "";
 
     @Watch("searchValue")
+    @Watch("users", { immediate: true })
+    @Watch("channels", { immediate: true })
     private search() {
         this.panels.splice(0, 2);
 
@@ -72,6 +74,10 @@ export default class Navigation extends Vue {
             this.filteredUsers = this.users;
             this.filteredChannels = this.channels;
         }
+    }
+
+    public select(id: string) {
+        this.$router.push({ path: `/messages/${id}` })
     }
 }
 </script>
