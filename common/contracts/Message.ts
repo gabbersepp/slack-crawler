@@ -3,6 +3,7 @@ export default interface Message {
     ts: string;
     _id: string;
     user: string;
+    text: string;
     
     // transient
     sortCriteria: number[];
