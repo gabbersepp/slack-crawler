@@ -19,7 +19,13 @@ export default class Repository {
 
     public async init(retryCount: number = 2) {
         try {
-            this.client = await MongoClient.connect(this.url);
+            this.client = await MongoClient.connect(this.url, {
+                useNewUrlParser: true,
+                autoReconnect: true,
+                reconnectTries: 2,
+                reconnectInterval: 1000,
+                poolSize: 10,
+              });
             this.db = this.client.db(this.mongo.db);
         } catch (e) {
             console.error(e);
