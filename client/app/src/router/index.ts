@@ -13,7 +13,7 @@ const routes: Array<RouteConfig> = [
     component: Home
   },
   {
-    path: '/messages/:id',
+    path: '/messages/:entity/:id',
     name: 'Messages',
     component: Messages
   }

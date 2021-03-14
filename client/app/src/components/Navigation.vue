@@ -1,7 +1,6 @@
 <template>
     <v-navigation-drawer permanent app class="pa-1">
         <v-text-field  prepend-icon="mdi-magnify" v-model="searchValue" placeholder="Kanal oder User" clearable></v-text-field>
-        <v-text-field  prepend-icon="mdi-magnify" v-model="searchValueMessages" placeholder="Nachricht" clearable></v-text-field>
         
         <v-expansion-panels accordion multiple v-model="panels">
             <v-expansion-panel>
@@ -22,7 +21,7 @@
                 <v-expansion-panel-content>
                     <v-list dense nav>
                         <v-list-item v-for="item in filteredUsers" :key="item.id" link>
-                            <v-list-item-content @click="select(item.id)">
+                            <v-list-item-content @click="selectIm(item.id)">
                                 <v-list-item-title>{{ item.name }}</v-list-item-title>
                             </v-list-item-content>
                         </v-list-item>
@@ -36,8 +35,9 @@
 </template>
 
 <script lang="ts">
-import SlackId from '@/contracts/SlackId';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import SlackId from '@/contracts/SlackId';
+import ImId from '@/contracts/ImId';
 
 @Component
 export default class Navigation extends Vue {
@@ -45,13 +45,14 @@ export default class Navigation extends Vue {
     private users!: SlackId[];
     @Prop()
     private channels!: SlackId[];
+    @Prop()
+    private ims: ImId[] = [];
 
     private filteredChannels: SlackId[] = [];
     private filteredUsers: SlackId[] = [];
 
     private panels: number[] = [];
     private searchValue: string = "";
-    private searchValueMessages: string = "";
 
     @Watch("searchValue")
     @Watch("users", { immediate: true })
@@ -77,7 +78,14 @@ export default class Navigation extends Vue {
     }
 
     public select(id: string) {
-        this.$router.push({ path: `/messages/${id}` })
+        this.$router.push({ path: `/messages/channel/${id}` })
+    }
+
+    public selectIm(id: string) {
+        const im = this.ims.find(x => x.user === id)
+        if (im) {
+        this.$router.push({ path: `/messages/im/${im.id}` })
+        }
     }
 }
 </script>

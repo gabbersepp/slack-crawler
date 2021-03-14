@@ -1,0 +1,5 @@
+use slack
+db.messages.createIndex( { text: "text" } )
+
+use slacktest
+db.messages.createIndex( { text: "text" } )

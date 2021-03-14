@@ -11,6 +11,22 @@ export default class Api {
         return this.get(`message/${id}`)
     }
 
+    public searchMessages(value: string): Promise<Message[]> {
+        return this.post("message/search", { search: value });
+    }
+
+    private async post(urlPart: string, data: any): Promise<any> {
+        const config = await Utils.getConfig();
+        const result = await fetch(`${config.baseUrl}/${urlPart}`, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return result.json();
+    }
+
     private async get(urlPart: string): Promise<any> {
         const config = await Utils.getConfig();
         const result = await fetch(`${config.baseUrl}/${urlPart}`);

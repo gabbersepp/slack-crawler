@@ -1,12 +1,13 @@
 <template>
   <v-app>
     <v-app-bar app color="#3F0E40" dark>
-      <v-spacer></v-spacer>
+        <v-text-field  prepend-icon="mdi-magnify" v-model="searchValueMessages" placeholder="Nachricht" clearable></v-text-field>
     </v-app-bar>
 
-    <Navigation :users="users" :channels="channels" />
+    <Navigation :users="users" :channels="channels" :ims="ims" />
     <v-content>
-      <router-view :key="$route.name + ($route.params.id || '')"/>
+      <router-view :key="$route.name + ($route.params.id || '')"  /><!--v-if="!searchedMessages" -->
+      <!--<MessageList :messages="searchedMessages" v-if="searchedMessages" />-->
     </v-content>
   </v-app>
 </template>
@@ -16,13 +17,16 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import SlackId from './contracts/SlackId';
 import ImId from './contracts/ImId';
 import Navigation from "./components/Navigation.vue";
+import MessageList from "./components/MessageList.vue";
 
 import Api from './utils/Api';
 import Utils from './utils/Utils';
+import Message from './contracts/server/Message';
 
 @Component({
   components: {
-    Navigation
+    Navigation,
+    MessageList
   }
 })
 export default class App extends Vue {
@@ -30,6 +34,10 @@ export default class App extends Vue {
   private users: SlackId[] = [];
   private channels: SlackId[] = [];
   private ims: ImId[] = [];
+
+  private searchValueMessages: string = "";
+
+  private debouncedId: number = 0;
 
   private api: Api = new Api();
 
@@ -40,11 +48,21 @@ export default class App extends Vue {
     this.ims = slackIdResult.imsList;
   }
 
-  public selectIm(id: string) {
-    const im = this.ims.find(x => x.user === id)
-    if (im) {
-      this.$router.push({ path: `/messages/${im.id}` })
+  @Watch("searchValueMessages")
+  private async searchMessages() {
+    if (this.debouncedId > 0) {
+      clearTimeout(this.debouncedId);
     }
+    this.debouncedId = setTimeout(async () => {
+      if (this.searchValueMessages) {
+        //this.searchedMessages = await this.api.searchMessages(this.searchValueMessages);
+        this.$router.push({ path: `/messages/search/${this.searchValueMessages}` })
+      } else {
+        this.$router.push({ path: `/messages/_/noMessage` })
+      }
+
+      clearTimeout(this.debouncedId);
+    }, 500);
   }
 }
 </script>

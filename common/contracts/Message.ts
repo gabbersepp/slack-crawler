@@ -8,4 +8,6 @@ export default interface Message {
     // transient
     sortCriteria: number[];
     displayUser: string;
+    displayTarget: string;
+    isIm: boolean;
 }

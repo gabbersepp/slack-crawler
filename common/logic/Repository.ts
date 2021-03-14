@@ -98,4 +98,8 @@ export default class Repository {
         const result = await this.messages.deleteOne({ _id: new ObjectID(message._id) });
         return result.deletedCount;
     }
+
+    public async searchMessages(text: string): Promise<Message[]> {
+        return this.messages.find({ $text: { $search: text }}).toArray();
+    }
 }
