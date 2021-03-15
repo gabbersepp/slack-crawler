@@ -6,7 +6,7 @@
 
     <Navigation :users="users" :channels="channels" :ims="ims" />
     <v-content>
-      <router-view :key="$route.name + ($route.params.id || '')"  /><!--v-if="!searchedMessages" -->
+      <router-view :key="$route.name + ($route.params.id || '')" v-if="initialized" /><!--v-if="!searchedMessages" -->
       <!--<MessageList :messages="searchedMessages" v-if="searchedMessages" />-->
     </v-content>
   </v-app>
@@ -40,12 +40,14 @@ export default class App extends Vue {
   private debouncedId: number = 0;
 
   private api: Api = new Api();
+  private initialized: boolean = false;
 
   public async created() {
     const slackIdResult = await this.api.getSlackIds();
     this.users = slackIdResult.userList;
     this.channels = slackIdResult.channelList;
     this.ims = slackIdResult.imsList;
+    this.initialized = true;
   }
 
   @Watch("searchValueMessages")

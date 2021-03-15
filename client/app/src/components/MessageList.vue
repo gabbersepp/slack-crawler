@@ -3,9 +3,8 @@
       <v-list-item three-line v-for="msg in messages" :key="msg.ts">
         <v-list-item-content>
             <slot :msg="msg"></slot>
-
           <v-list-item-subtitle>
-            {{ msg.text }}
+            {{msg.text}}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
