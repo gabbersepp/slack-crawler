@@ -1,11 +1,11 @@
 import * as express from "express";
 import * as cors from "cors";
 import * as fs from "fs";
-import { Config, User, Channel, Ims, Repository, Utils } from "./../common";
+import { Config, User, Channel, Ims, Repository, Utils, Message } from "./../common";
 import * as path from "path";
+import emojis from "./emoji.json";
 
 const port = 8081;
-const repo = new Repository(getConfig());
 
 const app = express.default();
 app.use(cors.default());
@@ -14,14 +14,15 @@ app.use(express.urlencoded({extended: true}))
 
 function getConfig() {
     const config = Utils.getConfig(path.resolve("config/config.json"));
-    console.log(JSON.stringify(config));
     return config;
 }
 
-app.get("/slackIds", (req, res) => {
-    const userList = readUser();
-    const channelList = readChannels();
-    const imsList = readIms();
+const repo = new Repository(getConfig());
+
+app.get("/slackIds", async (req, res) => {
+    const userList = await repo.readUsers();
+    const channelList = await repo.readChannels();
+    const imsList = await repo.readIms();
 
     res.json({
         userList,
@@ -30,54 +31,77 @@ app.get("/slackIds", (req, res) => {
     });
 })
 
-app.get("/ids", async (req, res) => {
+async function extendMessages(messages:  Message[]) {
+    const users = await repo.readUsers();
+    const ims = await repo.readIms();
     const channels = await repo.readChannels();
-    res.json(channels);
-})
 
-app.get("/message/:id", (req, res) => {
-    const config = getConfig();
-    const path = `${config.server.dataDir}/messages/${req.params.id}.json`;
-    const users = readUser();
-
-    if (!fs.existsSync(path)) {
-        res.sendStatus(404);
-        return;
-    }
-
-    let content = JSON.parse(fs.readFileSync(path).toString());
-    content.forEach(x => {
-        const ts = x.ts.split(".").map(x => parseInt(x))
+    messages.forEach(x => {
+        const ts = x.ts.split(".").map(split => parseInt(split, 10));
         x.sortCriteria = ts;
-        const user = users.find(u => u.id === x.user)
-        x.displayUser = user ? user.name : x.user
-    })
-    content = content.sort((m1, m2) => {
+        const user = users.find(u => u.id === x.user);
+        const im = ims.find(i => i.id === x.channel);
+        const imUser = im ? users.find(u => u.id === im.user) : null;
+        const channel = channels.find(c => c.id === x.channel);
+        x.displayUser = user ? user.name : x.user;
+        x.displayTarget = ((imUser || channel) || {}).name;
+        x.isIm = !!imUser;
+        x.text = convertEmojis(x.text);
+    });
+
+    messages = messages.sort((m1, m2) => {
         if (m1.sortCriteria[0] === m2.sortCriteria[0]) {
             return m2.sortCriteria[1] - m1.sortCriteria[1]
         }
 
         return m2.sortCriteria[0] - m1.sortCriteria[0]
     })
-    res.json(content)
+
+    return messages;
+} 
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+function convertEmojis(value: string) {
+    const regexp = /:([^ :]+):/;
+    let match = regexp.exec(value);
+    while (match != null) {
+        const emoji =  emojis[match[1]];
+        // remove :...: otherwise the loop will never end
+        value = value.replace(new RegExp(`${escapeRegExp(match[0])}`, "g"), emoji || match[1])
+
+        match = regexp.exec(value);
+    }
+    return value;
+}
+
+app.post("/message/search", async (req, res) => {
+    try {
+        const searchValue = req.body.search;
+        let messages = await repo.searchMessages(searchValue);
+        messages = await extendMessages(messages);
+        res.json(messages);
+    } catch (e) {
+        console.error(e);
+        res.sendStatus(500);
+    }
+});
+
+app.get("/message/:id", async (req, res) => {
+    let messages = await repo.readMessages({ "channel": req.params.id });
+    if (messages.length === 0) {
+        res.sendStatus(404);
+        return;
+    }
+    
+    messages = await extendMessages(messages);
+    res.json(messages);
+});
+
+
+app.listen(port, async () => {
+    console.log("listen on port " + port);
+    await repo.init();
 })
-
-
-app.listen(port, () => console.log("listen on port " + port))
-
-
-function readChannels(): Channel[] {
-    const config = getConfig();
-    return JSON.parse(fs.readFileSync(`${config.server.dataDir}/channels/channels.json`).toString())
-}
-
-function readIms(): Ims[] {
-    const config = getConfig();
-    return JSON.parse(fs.readFileSync(`${config.server.dataDir}/channels/ims.json`).toString());
-}
-
-function readUser(): User[] {
-    const config = getConfig();
-    const path = `${config.server.dataDir}/users/users.json`;
-    return JSON.parse(fs.readFileSync(path).toString())
-}

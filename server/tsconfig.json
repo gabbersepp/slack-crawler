@@ -5,8 +5,10 @@
       "esModuleInterop": true,
       "moduleResolution": "node",
       "sourceMap": true,
-      "outDir": "dist/server"
+      "outDir": "dist/server",
+      "resolveJsonModule": true
     },
+    "include": ["emoji.json", "*.ts"],
     "references": [
         { 
             "path": "../common"
