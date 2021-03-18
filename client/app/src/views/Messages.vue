@@ -3,14 +3,23 @@
     <MessageList :messages="messages" v-if="!noMessage">
       <template v-slot:default="props">
         <v-list-item-title v-if="entity === 'channel'">
-          <router-link :to="`/messages/im/${props.msg.user}`">{{ props.msg.displayUser }}</router-link>
+          <v-btn text color="#3F0E40" @click="$router.push({ path: `/messages/im/${props.msg.user}` })">{{ props.msg.displayUser }}</v-btn>
         </v-list-item-title>
         <v-list-item-title v-if="entity === 'search' && !props.msg.isIm">
-          <router-link :to="`/messages/channel/${props.msg.channel}`">{{ props.msg.displayTarget }}</router-link>
+          <v-btn text color="#3F0E40" @click="$router.push({ path: `/messages/channel/${props.msg.channel}` })">{{ props.msg.displayTarget }}</v-btn>
         </v-list-item-title>
         <v-list-item-title v-if="props.msg.isIm">
-          <router-link :to="`/messages/im/${props.msg.user}`">{{ props.msg.displayTarget }}</router-link>
+          <v-btn text color="#3F0E40" @click="$router.push({ path: `/messages/im/${props.msg.user}` })">{{ props.msg.displayTarget }}</v-btn>
         </v-list-item-title>
+      </template>
+      <template v-slot:thread="props">
+        <MessageList :messages="props.messages">
+          <template v-slot:default="props">
+            <v-list-item-title>
+              <v-btn text color="#3F0E40" @click="$router.push({ path: `/messages/im/${props.msg.user}` })">{{ props.msg.displayUser }}</v-btn>
+            </v-list-item-title>
+          </template>
+        </MessageList>
       </template>
     </MessageList>
     <div>

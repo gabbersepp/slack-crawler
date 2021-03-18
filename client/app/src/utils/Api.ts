@@ -7,6 +7,10 @@ export default class Api {
         return this.get("slackIds")
     }
 
+    public getThreadMessages(channel: string, threadTs: string): Promise<Message[]> {
+        return this.get(`thread/${channel}/${threadTs}`)
+    }
+
     public getMessages(id: string): Promise<Message[]> {
         return this.get(`message/${id}`)
     }

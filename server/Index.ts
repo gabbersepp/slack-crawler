@@ -101,6 +101,17 @@ app.get("/message/:id", async (req, res) => {
     res.json(messages);
 });
 
+app.get("/thread/:channel/:threadTs", async (req, res) => {
+    let messages = await repo.readMessages({ "channel": req.params.channel, "reply_count": { $exists: false }, "thread_ts":req.params.threadTs });
+    if (messages.length === 0) {
+        res.sendStatus(404);
+        return;
+    }
+    
+    messages = await extendMessages(messages);
+    res.json(messages);
+});
+
 
 app.listen(port, async () => {
     console.log("listen on port " + port);
