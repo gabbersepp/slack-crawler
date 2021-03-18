@@ -15,10 +15,10 @@ function readNewMessages(filePath): Message[] {
   return JSON.parse(fs.readFileSync(filePath).toString()).messages;
 }
 
-function getTempMessages() {
-  return fs.readdirSync(`${dataDir}/messages-temp`).map(file => {
+function getTempMessages(partialDir) {
+  return fs.readdirSync(`${dataDir}/${partialDir}`).map(file => {
     const channel = /.*_([0-9a-z]+)\.json/i.exec(file)[1];
-    return { channel, file: `${dataDir}/messages-temp/${file}` };
+    return { channel, file: `${dataDir}/${partialDir}/${file}` };
   });
 }
 
@@ -34,8 +34,8 @@ function readAdditionalData() {
   }
 }
 
-async function processMessages() {
-  const newMsgFile = getTempMessages();
+async function processMessages(partialDir) {
+  const newMsgFile = getTempMessages(partialDir);
 
   for (const d of newMsgFile) {
     const messages = readNewMessages(d.file);
@@ -82,7 +82,8 @@ async function processData() {
 async function processAll() {
   await repo.init();
   await processData();
-  await processMessages();
+  await processMessages("messages-temp");
+  await processMessages("threads-temp");
   return repo.close();
 }
 

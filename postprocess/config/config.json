@@ -12,6 +12,6 @@
         "server": "192.168.2.149",
         "user": "slack",
         "pw": "slack",
-        "db": "slack"
+        "db": "slacktest"
     }
 }
