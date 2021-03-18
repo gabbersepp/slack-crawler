@@ -26,6 +26,7 @@ describe("Read everything from slack", () => {
         cy.intercept("POST", /.*client\.counts.*/i).as("clientCounts");
         cy.intercept("POST", /.*client\.boot.*/i).as("clientBoot");
         cy.intercept("POST", /.*conversations\.history.*/i).as("history")
+        cy.intercept("POST", /.*conversations\.replies.*/i).as("replies")
 
         cy.get("button[data-qa='signin_button']").click();
         //cy.get("button[data-qa='continue_in_browser']").click()
@@ -100,6 +101,28 @@ describe("Read everything from slack", () => {
         // wait for "history" requests until no one occures anymore
         waitAndWriteMessages(config.crawler.dataDir);
     })
+
+    it("Read threads", () => {
+        cy.on("fail", (error) => {
+            // the last wait() will fail. This is intended because we do not know when then last one occurs
+            if (error.name === "CypressError"
+                && error.message.toString()
+                                .match(/.*timed out waiting `.*` for the .* request to the route: `replies`.*/)) {
+                return false;
+            }
+        });
+        cy.writeFile("./threadids.json", JSON.stringify(idsForThreads));
+        
+        const config = Cypress.config().customConfig;
+        let last = cy.wrap({});
+        idsForThreads.forEach(i => {
+            last = last.then(() => {
+                const channel = /(.*)-.*/.exec(i)[1]
+                cy.visit(`https://app.slack.com/client/T04PTB2HM/${channel}/thread/${i}`).wait(5000);
+            })
+        })
+        waitAndWriteThreads(config.crawler.dataDir);
+    })
     
     function distinct(list, fn) {
         const obj = {};
@@ -148,10 +171,8 @@ describe("Read everything from slack", () => {
                         const body = obj.response.body;
                         
                         body.messages.forEach(m => {
-                            debugger;
                             if (m.reply_count > 0) {
                                 idsForThreads.push(`${channel}-${m.thread_ts}`);
-                                cy.writeFile("threadids.json", JSON.stringify(idsForThreads))
                             }
                         })
                         
@@ -161,6 +182,25 @@ describe("Read everything from slack", () => {
             }
 
             waitAndWriteMessages(dataDir);
+        })
+    }
+
+    function waitAndWriteThreads(dataDir) {
+        cy.wait("@replies").then(obj => {
+            if (obj.request.body) {
+                var formData = new TextDecoder("utf-8").decode(obj.request.body)
+                if (formData) {
+                    var channel = /channel\"\s+([a-z0-9]{9})/gi.exec(formData)
+                    if (channel && channel.length >= 2) {
+                        channel = channel[1];
+                        
+                        cy.writeFile(`${dataDir}/threads-temp/${new Date().getTime()}_${channel}.json`, JSON.stringify(obj.response.body))
+                    }
+                }
+
+            }
+
+            waitAndWriteThreads(dataDir);
         })
     }
 })

@@ -2,5 +2,6 @@
     "chromeWebSecurity": false,
     "defaultCommandTimeout": 50000,
     "requestTimeout": 50000,
-    "responseTimeout": 50000
+    "responseTimeout": 50000,
+    "video": false
 }
