@@ -89,8 +89,9 @@ app.post("/message/search", async (req, res) => {
     }
 });
 
+// read only parent messages, no threads
 app.get("/message/:id", async (req, res) => {
-    let messages = await repo.readMessages({ "channel": req.params.id });
+    let messages = await repo.readMessages({ "channel": req.params.id, $or: [{ "reply_count": { $exists: true } }, {"thread_ts": { $exists: false }  }] });
     if (messages.length === 0) {
         res.sendStatus(404);
         return;
