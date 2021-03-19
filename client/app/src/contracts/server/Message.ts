@@ -11,5 +11,4 @@ export default interface Message {
     displayUser: string;
     displayTarget: string;
     isIm: boolean;
-    threadMessages: Message[];
 }

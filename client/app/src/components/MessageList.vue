@@ -8,7 +8,7 @@
           <v-list-item-subtitle>
             {{msg.text}}
           </v-list-item-subtitle>
-          <v-list-item-subtitle v-if="threadMessages.length > 0 && threadMessages[0].thread_ts === msg.thread_ts">
+          <v-list-item-subtitle v-if="threadMessages.length > 0 && threadMessages[0].thread_ts === msg.thread_ts" class="threadbox">
             <slot :messages="threadMessages" name="thread"></slot>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -37,5 +37,7 @@ export default class MessageList extends Vue {
 </script>
 
 <style lang="scss" scoped>
-
+.threadbox {
+  border-left: 1px solid #3F0E40;
+}
 </style>
