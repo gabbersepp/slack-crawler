@@ -65,7 +65,7 @@ spec:
           hostIPC: true
           containers:
           - name: cypress
-            image: ghcr.io/gabbersepp/slack-crawler
+            image: gabbersepp/slack-crawler
             volumeMounts:
               - mountPath: /e2e/data
                 name: sambashare
@@ -155,7 +155,7 @@ spec:
           hostIPC: true
           containers:
           - name: postprocess
-            image: ghcr.io/gabbersepp/slack-crawler-postprocess
+            image: gabbersepp/slack-crawler-postprocess
             volumeMounts:
               - mountPath: /data
                 name: sambashare
