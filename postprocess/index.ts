@@ -53,6 +53,8 @@ async function processMessages(partialDir) {
       m.channel = d.channel;
       await repo.insertMessage(m);
     }
+
+    fs.unlinkSync(d.file);
   }
 }
 
