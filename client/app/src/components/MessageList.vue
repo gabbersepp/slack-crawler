@@ -5,8 +5,7 @@
           <v-row no-gutters>
             <v-col :cols="1"><slot :msg="msg"></slot></v-col>
             <v-col v-if="msg.reply_count"><v-btn text color="#3F0E40" @click="loadThread(msg)">{{ msg.reply_count }} Antworten</v-btn></v-col></v-row>
-          <v-list-item-subtitle>
-            {{msg.text}}
+          <v-list-item-subtitle v-html="msg.text">
           </v-list-item-subtitle>
           <v-list-item-subtitle v-if="threadMessages.length > 0 && threadMessages[0].thread_ts === msg.thread_ts" class="threadbox">
             <slot :messages="threadMessages" name="thread"></slot>
@@ -36,8 +35,12 @@ export default class MessageList extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .threadbox {
   border-left: 1px solid #3F0E40;
+}
+.user-marker, .channel-marker {
+  font-weight: bold;
+  color: #3F0E40;
 }
 </style>

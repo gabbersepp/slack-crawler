@@ -4,6 +4,7 @@ import User from "./contracts/User";
 import Ims from "./contracts/Ims";
 import Message from "./contracts/Message";
 import Repository from "./logic/Repository";
+import Block from "./contracts/Block";
 import * as Utils from "./logic/Utils";
 
 export {
@@ -13,5 +14,6 @@ export {
     Ims,
     Message,
     Repository,
+    Block,
     Utils
 }

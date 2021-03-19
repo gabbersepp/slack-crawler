@@ -47,6 +47,8 @@ async function extendMessages(messages:  Message[]) {
         x.displayTarget = ((imUser || channel) || {}).name;
         x.isIm = !!imUser;
         x.text = convertEmojis(x.text);
+
+        x.text = convertTags(x.text, x, users);
     });
 
     messages = messages.sort((m1, m2) => {
@@ -60,7 +62,7 @@ async function extendMessages(messages:  Message[]) {
     return messages;
 } 
 
-function escapeRegExp(string) {
+function escapeRegExp(string: string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
@@ -74,6 +76,29 @@ function convertEmojis(value: string) {
 
         match = regexp.exec(value);
     }
+    return value;
+}
+
+function convertTags(value: string, msg: Message, users: User[]) {
+    value = value.replace("<!channel>", "<span class='channel-marker'>@channel</span>");
+
+    if (msg.blocks) {
+        const block = msg.blocks.find(x => x.type === "rich_text");
+        if (block && block.elements) {
+            const element = block.elements.find(x => x.type === "rich_text_section");
+            if (element) {
+                element.elements.forEach(e => {
+                    if (e.type === "user") {
+                        const user = users.find(x => x.id === e.user_id);
+                        if (user) {
+                            value = value.replace(`<@${e.user_id}>`, `<span class='user-marker'>@${user.name}</span>`)
+                        }
+                    }
+                })
+            }
+        }
+    }
+
     return value;
 }
 
