@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run tsc && node dist/server/Index.js",
-    "tsc": "tsc -b && node build/Index.js"
+    "tsc": "tsc -b && node build/index.js"
   },
   "author": "",
   "license": "MIT",

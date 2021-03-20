@@ -1,7 +1,7 @@
-import Channel from "common/contracts/Channel";
-import Config, { MongoConfig } from "common/contracts/Config";
-import Ims from "common/contracts/Ims";
-import User from "common/contracts/User";
+import Channel from "../contracts/Channel";
+import Config, { MongoConfig } from "../contracts/Config";
+import Ims from "../contracts/Ims";
+import User from "../contracts/User";
 import { Db, MongoClient, ObjectID } from "mongodb";
 import Message from "../contracts/Message";
 import { distinct, getConfig } from "./Utils";

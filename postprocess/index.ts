@@ -1,7 +1,7 @@
 // merge messages-temp into /messages
 import * as fs from "fs";
 import * as path from "path";
-import { Config, User, Channel, Ims, Repository, Utils, Message } from "./../common";
+import { Config, User, Channel, Ims, Repository, Utils, Message } from "../common/Index";
 
 const repo = new Repository(getConfig());
 const dataDir = getConfig().postprocessor.dataDir;

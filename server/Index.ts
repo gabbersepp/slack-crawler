@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as cors from "cors";
 import * as fs from "fs";
-import { Config, User, Channel, Ims, Repository, Utils, Message } from "./../common";
+import { Config, User, Channel, Ims, Repository, Utils, Message } from "../common/Index";
 import * as path from "path";
 import emojis from "./emoji.json";
 

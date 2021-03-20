@@ -4,11 +4,6 @@
       "declarationMap": true,
       "target": "es5",
       "moduleResolution": "node",
-      "esModuleInterop": true,
-      "composite": true,
-      "baseUrl": ".", // This must be specified if "paths" is.
-        "paths": {
-        "packages/*": ["packages/*"]
-      }
+      "esModuleInterop": true
     }
   }

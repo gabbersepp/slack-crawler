@@ -1,13 +1,13 @@
 
-FROM node as build
-WORKDIR /app
+FROM gabbersepp/slack-crawler-common as build
+WORKDIR /slack-crawler/client/app
 COPY app/package.json package.json
 COPY app/package-lock.json package-lock.json
 
 RUN npm install
 
-COPY app/ /app
-RUN npm run build
+COPY app/ .
+RUN npm run build-docker
 
 FROM nginx
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /slack-crawler/client/app/dist /usr/share/nginx/html

@@ -1,15 +1,12 @@
-# mount /data
-
-# docker build -t ghcr.io/gabbersepp/slack-crawler-postprocess .
-
-FROM node as builder
-COPY package.json package.json
+FROM gabbersepp/slack-crawler-common as builder
+COPY package.json /slack-crawler/postprocess/package.json
+WORKDIR /slack-crawler/postprocess
 RUN npm install
 
 COPY . .
 RUN npm run tsc
 
 FROM node
-COPY --from=builder /dist .
+COPY --from=builder /slack-crawler/postprocess/dist .
 
 CMD node index.js

@@ -1,10 +1,12 @@
+CALL docker build -t gabbersepp/slack-crawler-common .
+
 CD client
 CALL docker build -t gabbersepp/slack-crawler-web .
 CALL docker push gabbersepp/slack-crawler-web
 
 CD ../messageHandler
-CALL docker build -t gabbersepp/slack-crawler .
-CALL docker push gabbersepp/slack-crawler
+CALL docker build -t ghcr.io/gabbersepp/slack-crawler .
+CALL docker push ghcr.io/gabbersepp/slack-crawler
 
 CD ../postprocess
 CALL docker build -t gabbersepp/slack-crawler-postprocess .

@@ -1,4 +1,4 @@
-import Config from "common/contracts/Config";
+import Config from "../contracts/Config";
 import * as fs from "fs";
 
 export function getConfig(path: string): Config {

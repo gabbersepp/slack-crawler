@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "npm run contracts && vue-cli-service serve",
     "build": "npm run contracts && vue-cli-service build",
+    "build-docker": "vue-cli-service build",
     "contracts": "node build/index.js"
   },
   "dependencies": {

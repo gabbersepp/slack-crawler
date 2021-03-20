@@ -7,6 +7,7 @@ export default interface Message {
     user: string;
     text: string;
     blocks: Block[];
+    thread_ts: string;
     
     // transient
     sortCriteria: number[];

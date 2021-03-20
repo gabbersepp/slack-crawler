@@ -5,7 +5,7 @@
       "esModuleInterop": true,
       "moduleResolution": "node",
       "sourceMap": true,
-      "outDir": "dist/server"
+      "outDir": "dist/postprocess"
     },
     "references": [
         { 
