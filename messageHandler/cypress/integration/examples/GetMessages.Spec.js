@@ -15,7 +15,7 @@ describe("Read everything from slack", () => {
         cy.setCookie("shown_download_ssb_modal", "1")
 
         cy.visit("https://slack.com/workspace-signin")
-        cy.get("input[data-qa='signin_domain_input']").type("sagswe");
+        cy.get("input[data-qa='signin_domain_input']").type(config.workspace);
         cy.get("button[data-qa='submit_team_domain_button']").click();
 
         cy.get("input[data-qa='login_email']").type(config.user)
@@ -30,7 +30,7 @@ describe("Read everything from slack", () => {
 
         cy.get("button[data-qa='signin_button']").click();
         //cy.get("button[data-qa='continue_in_browser']").click()
-        cy.visit("https://sagswe.slack.com/")
+        cy.visit(`https://${config.workspace}.slack.com/`)
     })
 
     it("Read channels and ims", () => {
@@ -48,6 +48,8 @@ describe("Read everything from slack", () => {
 
     // click onto every channel to get every user
     it("Read all users", () => {
+        const config = Cypress.config().customConfig;
+
         cy.on("fail", (error) => {
             // the last wait() will fail. This is intended because we do not know when then last one occurs
             if (error.name === "CypressError"
@@ -62,7 +64,7 @@ describe("Read everything from slack", () => {
 
         channels.forEach(c => {
             last = last.then(() => 
-                cy.visit(`https://app.slack.com/client/T04PTB2HM/${c.id}`).wait(5000));
+                cy.visit(`https://app.slack.com/client/${config.teamId}/${c.id}`).wait(5000));
         });
 
         waitAndReadUsers(usersArray);
@@ -94,7 +96,7 @@ describe("Read everything from slack", () => {
 
         channelIds.forEach(c => {
             last = last.then(() => 
-                cy.visit(`https://app.slack.com/client/T04PTB2HM/${c}`).wait(5000)
+                cy.visit(`https://app.slack.com/client/${config.teamId}/${c}`).wait(5000)
                 .then(() => scroll()))
         })
 
@@ -118,7 +120,7 @@ describe("Read everything from slack", () => {
         idsForThreads.forEach(i => {
             last = last.then(() => {
                 const channel = /(.*)-.*/.exec(i)[1]
-                cy.visit(`https://app.slack.com/client/T04PTB2HM/${channel}/thread/${i}`).wait(5000);
+                cy.visit(`https://app.slack.com/client/${config.teamId}/${channel}/thread/${i}`).wait(5000);
             })
         })
         waitAndWriteThreads(config.crawler.dataDir);
