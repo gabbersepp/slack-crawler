@@ -5,6 +5,8 @@ import Ims from "./contracts/Ims";
 import Message from "./contracts/Message";
 import Repository from "./logic/Repository";
 import Block from "./contracts/Block";
+import SlackFile from "./contracts/SlackFile";
+
 import * as Utils from "./logic/Utils";
 
 export {
@@ -15,5 +17,6 @@ export {
     Message,
     Repository,
     Block,
+    SlackFile,
     Utils
 }

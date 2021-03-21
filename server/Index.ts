@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as cors from "cors";
 import * as fs from "fs";
-import { Config, User, Channel, Ims, Repository, Utils, Message } from "../common/Index";
+import { Config, User, Channel, Ims, Repository, Utils, Message, SlackFile } from "../common/Index";
 import * as path from "path";
 import emojis from "./emoji.json";
 
@@ -101,10 +101,18 @@ function convertTags(value: string, msg: Message, users: User[]) {
 
     if (msg.files && msg.files.length > 0) {
         msg.files.forEach(file => {
-            value = `
-            ${value}</br>
-            <div class="image_full_view"><img src="http://localhost:${port}/file/${file.id}/${file.created}/thumb_360"></div>
-            `
+            if (file.mimetype.indexOf("image") >= 0) {
+                value = `
+                ${value}</br>
+                <div class="image_full_view"><img src="http://localhost:${port}/file/${file.id}/${file.created}/thumb_360"></div>
+                `
+            } else {
+                value = `
+                ${value}
+                </br>
+                <div class="download_link"><a target="_blank" href="http://localhost:${port}/file/${file.id}/${file.created}">${file.name}</a></div>
+                `
+            }
         })
     }
 
@@ -146,16 +154,24 @@ app.get("/thread/:channel/:threadTs", async (req, res) => {
     res.json(messages);
 });
 
-app.get("/file/:id/:created/:suffix", async (req, res) => {
-    const query = { "id": req.params.id, "created": parseInt(req.params.created, 10) } as any;
-    
+app.get("/file/:id/:created/:suffix?", async (req, res) => {
+    const id = req.params.id;
+    const created = parseInt(req.params.created, 10);
+    const query = { id, created } as any;
+
     if (req.params.suffix) {
         query.suffix = req.params.suffix;
     }
 
     const files = await repo.readFiles(query);
     if (files.length > 0) {
-        res.set('Content-Type', 'image/png');
+        const messages = await repo.readMessages({ "files": { $elemMatch: { id, created } } });
+        const slackFile: SlackFile = messages[0].files.find(x => x.id === id);
+        const mimeType = slackFile.mimetype;
+        if (mimeType.indexOf("image") <= -1) {
+            res.set("Content-Disposition",  `attachment; filename="${slackFile.name}"`);
+        }
+        res.set('Content-Type', mimeType);
         res.end(new Buffer(files[0].content.buffer));
     } else {
         res.sendStatus(404);
