@@ -2,7 +2,8 @@ import Channel from "../contracts/Channel";
 import Config, { MongoConfig } from "../contracts/Config";
 import Ims from "../contracts/Ims";
 import User from "../contracts/User";
-import { Db, MongoClient, ObjectID } from "mongodb";
+import File from "../contracts/File";
+import { Binary, Db, MongoClient, ObjectID } from "mongodb";
 import Message from "../contracts/Message";
 import { distinct, getConfig } from "./Utils";
 
@@ -57,6 +58,10 @@ export default class Repository {
         return this.db.collection("ims");
     }
 
+    public get files() {
+        return this.db.collection("files");
+    }
+
     public async readChannelsFromMessages() {
         const allMessages = (await (await this.messages).find<Message>({}, { fields: { channel: 1 } }).toArray()).map(x => x.channel);
         return distinct(allMessages);
@@ -77,6 +82,10 @@ export default class Repository {
     public async readIms(query?: any): Promise<Ims[]> {
         return this.ims.find(query).toArray();
     }
+
+    public async readFiles(query?: any): Promise<File[]> {
+        return this.files.find(query).toArray();
+    }
     
     public async insertMessage(message: Message) {
         return (await this.messages.insertOne(message)).insertedCount > 0;
@@ -92,6 +101,12 @@ export default class Repository {
 
     public async insertIms(ims: Ims) {
         return (await this.ims.insertOne(ims)).insertedCount > 0;
+    }
+
+    public async insertFile(file: File) {
+        file.content = new Binary(file.content);
+        const saveResult = await this.files.insertOne(file);
+        return saveResult.insertedCount;
     }
 
     public async delete(message: Message) {

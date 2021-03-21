@@ -5,6 +5,7 @@ describe("Read everything from slack", () => {
     let idsForThreads = [];
     let channels = [];
     let ims = [];
+    let files = [];
 
     beforeEach(() => {
         const config = Cypress.config().customConfig;
@@ -125,6 +126,23 @@ describe("Read everything from slack", () => {
         })
         waitAndWriteThreads(config.crawler.dataDir);
     })
+
+    it("download files", () => {
+        const config = Cypress.config().customConfig;
+        files.forEach(file => {
+            const baseFileName = `${file.id}_${file.created}`;
+            downloadFile(config.crawler.dataDir, file.url_private, baseFileName);
+            downloadFile(config.crawler.dataDir, file.thumb_64, `${baseFileName}_thumb_64`);
+            downloadFile(config.crawler.dataDir, file.thumb_80, `${baseFileName}_thumb_80`);
+            downloadFile(config.crawler.dataDir, file.thumb_160, `${baseFileName}_thumb_160`);
+            downloadFile(config.crawler.dataDir, file.thumb_360, `${baseFileName}_thumb_360`);
+            downloadFile(config.crawler.dataDir, file.thumb_480, `${baseFileName}_thumb_480`);
+            downloadFile(config.crawler.dataDir, file.thumb_720, `${baseFileName}_thumb_720`);
+            downloadFile(config.crawler.dataDir, file.thumb_800, `${baseFileName}_thumb_800`);
+            downloadFile(config.crawler.dataDir, file.thumb_960, `${baseFileName}_thumb_960`);
+            downloadFile(config.crawler.dataDir, file.thumb_1024, `${baseFileName}_thumb_1024`);
+        });
+    })
     
     function distinct(list, fn) {
         const obj = {};
@@ -173,6 +191,10 @@ describe("Read everything from slack", () => {
                         const body = obj.response.body;
                         
                         body.messages.forEach(m => {
+                            if (m.files && m.files.length > 0) {
+                                files.push(...m.files);
+                            }
+
                             if (m.reply_count > 0) {
                                 idsForThreads.push(`${channel}-${m.thread_ts}`);
                             }
@@ -196,6 +218,12 @@ describe("Read everything from slack", () => {
                     if (channel && channel.length >= 2) {
                         channel = channel[1];
                         
+                        obj.request.body.messages.forEach(m => {
+                            if (m.files && m.files.length > 0) {
+                                files.push(...m.files);
+                            }
+                        })
+
                         cy.writeFile(`${dataDir}/threads-temp/${new Date().getTime()}_${channel}.json`, JSON.stringify(obj.response.body))
                     }
                 }
@@ -203,6 +231,18 @@ describe("Read everything from slack", () => {
             }
 
             waitAndWriteThreads(dataDir);
+        })
+    }
+
+    function downloadFile(dataDir, url, filename) {
+        if (!url) {
+            return;
+        }
+        cy.request({
+            url,
+            encoding: "binary"
+        }).then(res => {
+            cy.writeFile(`${dataDir}/files-temp/${filename}`, res.body, "binary");
         })
     }
 })

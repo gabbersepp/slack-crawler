@@ -1,4 +1,5 @@
 import Block from "./Block";
+import File from "./File";
 
 export default interface Message {
     channel: string;
@@ -8,6 +9,7 @@ export default interface Message {
     text: string;
     blocks: Block[];
     thread_ts: string;
+    files: File[];
     
     // transient
     sortCriteria: number[];

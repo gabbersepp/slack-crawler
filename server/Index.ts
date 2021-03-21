@@ -99,6 +99,15 @@ function convertTags(value: string, msg: Message, users: User[]) {
         }
     }
 
+    if (msg.files && msg.files.length > 0) {
+        msg.files.forEach(file => {
+            value = `
+            ${value}</br>
+            <div class="image_full_view"><img src="http://localhost:${port}/file/${file.id}/${file.created}/thumb_360"></div>
+            `
+        })
+    }
+
     return value;
 }
 
@@ -136,6 +145,22 @@ app.get("/thread/:channel/:threadTs", async (req, res) => {
     messages = await extendMessages(messages);
     res.json(messages);
 });
+
+app.get("/file/:id/:created/:suffix", async (req, res) => {
+    const query = { "id": req.params.id, "created": parseInt(req.params.created, 10) } as any;
+    
+    if (req.params.suffix) {
+        query.suffix = req.params.suffix;
+    }
+
+    const files = await repo.readFiles(query);
+    if (files.length > 0) {
+        res.set('Content-Type', 'image/png');
+        res.end(new Buffer(files[0].content.buffer));
+    } else {
+        res.sendStatus(404);
+    }
+})
 
 
 app.listen(port, async () => {

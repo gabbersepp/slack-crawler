@@ -81,11 +81,38 @@ async function processData() {
   }
 }
 
+async function processFiles() {
+  const files = fs.readdirSync(`${dataDir}/files-temp`);
+  for (const file of files) {
+    const fileNamePartsMatch = file.match(/([^_]+)_([^_]+)(_(.*))?/);
+    const id = fileNamePartsMatch[1];
+    const created = parseInt(fileNamePartsMatch[2], 10);
+    const possibleSuffix = fileNamePartsMatch[4];
+
+    const query = { "id": id, "created": created } as any;
+    if (possibleSuffix) {
+      query.suffix = possibleSuffix;
+    }
+    const existingFiles = await repo.readFiles(query);
+    if (existingFiles.length === 0) {
+      const fileContent = fs.readFileSync(`${dataDir}/files-temp/${file}`);
+
+      await repo.insertFile({
+        id,
+        created,
+        suffix: possibleSuffix,
+        content: fileContent
+      })
+    }
+  }
+}
+
 async function processAll() {
   await repo.init();
   await processData();
   await processMessages("messages-temp");
   await processMessages("threads-temp");
+  await processFiles();
   return repo.close();
 }
 
