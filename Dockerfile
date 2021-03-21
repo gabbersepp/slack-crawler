@@ -5,5 +5,4 @@ RUN npm install
 
 COPY common /slack-crawler/common
 COPY tsconfig-base.json /slack-crawler/tsconfig-base.json
-WORKDIR /slack-crawler/common
 RUN npm run tsc

@@ -26,10 +26,7 @@ spec:
           ports:
           - containerPort: 8081
           volumeMounts:
-          - mountPath: /data
-            name: sambashare
-            subPath: slack-crawler
-          - mountPath: /config
+          - mountPath: /server/config
             name: sambashare
             subPath: slack-crawler/config
       volumes:
@@ -160,7 +157,7 @@ spec:
               - mountPath: /data
                 name: sambashare
                 subPath: slack-crawler
-              - mountPath: /config
+              - mountPath: /postprocess/config
                 name: sambashare
                 subPath: slack-crawler/config
           volumes:
