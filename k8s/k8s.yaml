@@ -57,12 +57,10 @@ spec:
       template:
         spec:
           restartPolicy: Never
-          imagePullSecrets:
-          - name: ghcrio
           hostIPC: true
           containers:
           - name: cypress
-            image: ghcr.io/gabbersepp/slack-crawler
+            image: gabbersepp/slack-crawler
             volumeMounts:
               - mountPath: /e2e/data
                 name: sambashare
