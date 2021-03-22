@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as cors from "cors";
 import * as fs from "fs";
-import { Config, User, Channel, Ims, Repository, Utils, Message, SlackFile } from "../common/Index";
+import { Config, User, Channel, Ims, Repository, Utils, Message, SlackFile, File } from "../common/Index";
 import * as path from "path";
 import emojis from "./emoji.json";
 
@@ -152,6 +152,13 @@ app.get("/thread/:channel/:threadTs", async (req, res) => {
     
     messages = await extendMessages(messages);
     res.json(messages);
+});
+
+app.post("/fileinfos", async (req, res) => {
+    const files = req.body as Partial<File>[];
+    const query = files.map(f => ({ id: f.id, created: f.created }));
+    const fileInfos = await repo.readFiles({ $or: query }, { id: true, created: true });
+    res.json(fileInfos);
 });
 
 app.get("/file/:id/:created/:suffix?", async (req, res) => {

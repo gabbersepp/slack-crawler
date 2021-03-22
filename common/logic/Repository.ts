@@ -83,8 +83,13 @@ export default class Repository {
         return this.ims.find(query).toArray();
     }
 
-    public async readFiles(query?: any): Promise<File[]> {
-        return this.files.find(query).toArray();
+    public async readFiles(query?: any, projection?: any): Promise<File[]> {
+        let options = undefined;
+        if (projection) {
+            options = {};
+            options.projection = projection;
+        }
+        return this.files.find(query, options).toArray();
     }
     
     public async insertMessage(message: Message) {
