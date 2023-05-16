@@ -2,6 +2,7 @@ export default interface Config {
     server: DataDirConfig;
     postprocessor: DataDirConfig;
     mongo: MongoConfig;
+    baseUrl: string;
 }
 
 interface DataDirConfig {

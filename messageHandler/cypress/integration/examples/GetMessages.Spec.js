@@ -129,15 +129,16 @@ describe("Read everything from slack", () => {
 
     it("download files", () => {
         const config = Cypress.config().customConfig;
+        const mappedFiles = files.map(x => ({ id: x.id, created: x.created }));
 
         cy.request({
             url: `${config.server.address}/fileinfos`, 
-            body: files,
+            body: mappedFiles,
             method: "POST"
         }).then(response => {
             const missingFiles = files.filter(f => !response.body.find(ff => ff.id === f.id && ff.created === f.created));
-            debugger;
-
+            cy.writeFile("./debug-files.txt", { mappedFiles, missingFiles })
+ 
             missingFiles.forEach(file => {
                 const baseFileName = `${file.id}_${file.created}`;
                 downloadFile(config.crawler.dataDir, file.url_private, baseFileName);

@@ -80,6 +80,7 @@ function convertEmojis(value: string) {
 }
 
 function convertTags(value: string, msg: Message, users: User[]) {
+    const config = getConfig();
     value = value.replace("<!channel>", "<span class='channel-marker'>@channel</span>");
 
     if (msg.blocks) {
@@ -104,13 +105,13 @@ function convertTags(value: string, msg: Message, users: User[]) {
             if (file.mimetype.indexOf("image") >= 0) {
                 value = `
                 ${value}</br>
-                <div class="image_full_view"><img src="http://localhost:${port}/file/${file.id}/${file.created}/thumb_360"></div>
+                <div class="image_full_view"><img src="${config.baseUrl}/file/${file.id}/${file.created}/thumb_360"></div>
                 `
             } else {
                 value = `
                 ${value}
                 </br>
-                <div class="download_link"><a target="_blank" href="http://localhost:${port}/file/${file.id}/${file.created}">${file.name}</a></div>
+                <div class="download_link"><a target="_blank" href="${config.baseUrl}/file/${file.id}/${file.created}">${file.name}</a></div>
                 `
             }
         })

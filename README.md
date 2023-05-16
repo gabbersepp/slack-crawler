@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/36491784/how-to-read-a-slack-user-id-from-response-and-get-the-username

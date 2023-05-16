@@ -6,6 +6,13 @@
         "dataDir": "../data"
     },
     "server": {
-        "dataDir": "../data"
-    }
+        "dataDir": "\\\\biehler.speedport.ip\\sambashare\\slack-crawler"
+    },
+    "mongo": {
+        "server": "192.168.2.149",
+        "user": "slack",
+        "pw": "slack",
+        "db": "slack"
+    },
+    "baseUrl": "http://localhost:8081"
 }

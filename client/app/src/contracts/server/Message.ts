@@ -1,4 +1,5 @@
 import Block from "./Block";
+import SlackFile from "./SlackFile";
 
 export default interface Message {
     channel: string;
@@ -8,6 +9,7 @@ export default interface Message {
     text: string;
     blocks: Block[];
     thread_ts: string;
+    files: SlackFile[];
     
     // transient
     sortCriteria: number[];
